@@ -1,0 +1,22 @@
+{% extends "base.html" %} 
+{% block content %}
+<section class="hero__section">
+  <div class="hs__container">
+    <h1 class="hs__title hs__items">Bringing everyone closer.</h1>
+    <p class="hs__desc hs__items">
+      Join nepsocial to share your experiences, connect with your loved ones,
+      and experience the social network in a new form.
+    </p>
+    <div class="hs__cta hs__items">
+      <div class="cta__btns">
+        <a href="{{ url_for('login') }}" class="btn btn--primary">Login</a>
+        <a
+          href="{{ url_for('register') }}"
+          class="btn btn--secondary"
+          >Register</a
+        >
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock content %}

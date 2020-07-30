@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+
+{% block content %}
+<section class="search">
+    <div class="results">
+        {% if users %}
+        <ul class="users">
+            <h3>Users: </h3>
+            {% for user in users %}
+            <li class="user">
+                <a href="{{url_for('user_posts', username = user.username)}}">{{ user.username }}</a>
+            </li>
+            {% endfor %}
+        {% else %}
+            <h3>0 users found</h3>
+        </ul>
+        {% endif %}
+        {% if posts %}
+        <ul class="post-results">
+            {% for post in posts %}
+            <li class="post-result">
+                <p class="post-title">
+                    {{ post.title }}
+                </p>
+                <a href="{{ url_for('post', id=post.id) }}">{{ post.content }}</a>
+            </li>
+            {% endfor %}
+            {% else %}
+            <h3>0 posts found</h3>
+        </ul>
+        {% endif %}
+    </div>
+</section>
+
+{% endblock content %}

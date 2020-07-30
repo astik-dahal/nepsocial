@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% block title %}
+Login 
+{% endblock title %} 
+
+{% block body %}
+<main id="login">
+  <div class="container">
+    <section class="login__section form__section">
+     <div class="rr__container form__container">
+       <h1 class="rr__header form__header">Reset Password</h1>
+        <form class="form rr__form" action="" method="POST">
+            {{ form.hidden_tag() }}
+            <fieldset >
+                <p class="legend">Please enter your email</p>
+                
+                <div class="form-group">
+                  {{ form.email.label (class="form-control-label") }}
+                  {% if form.email.errors %}
+                      {{ form.email  (class="form-control", placeholder="johndoe@gmail.com")}}
+                      <div class="invalid-feedback">
+                          {% for error in form.email.errors %}
+                          <span class="form-control-error" style="color: red;">{{error   }}</span>
+                          {% endfor %}
+                      </div>
+                  {% else %}
+                  {{ form.email (class="form-control", placeholder="johndoe@gmail.com") }} 
+                  {% endif %}
+              </div>
+              
+                  <div class="form-group">
+                    {{ form.submit(class="submit-btn btn btn--primary") }}
+                  </div>
+            </fieldset>
+        </form>
+     </div>
+    </section>
+  </div>
+</main>
+{% endblock body %}

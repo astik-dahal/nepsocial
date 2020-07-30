@@ -1,0 +1,75 @@
+{% extends "base.html" %}
+{%block content %}
+    <section class="post">
+      <div class="post__container">
+        <h1 class="pc__title"> {{ post.title }}</h1>
+        <div class="pc__header">
+          <p class="author_img">
+            <img src="{{ url_for('static',filename='profile_pics/' +current_user.profile_image) }}" alt="{{ current_user.username }}"></p>
+          </p>
+          <div class="author">
+            <a href="{{ url_for('user_posts', username = post.author.username)}}">{{ post.author.username}}</a> 
+           </div>
+          <p>
+            .
+          </p>
+          <p class="category">{{ post.category }}</p>
+          <p>
+            .
+          </p>
+          <p class="dateposted">
+            <span>{{ post.date_posted.strftime("%d %b, %Y") }} </span>
+          </p>
+        </div>
+
+        {% if post.image_file %}
+        <div class="pc__image">
+            <img src="
+            {{url_for('static', filename='post_pictures/' + post.image_file )}}
+            " alt="Posted by {{current_user.username}}">
+          </div>
+        {% endif %}
+
+        <div class="pc__content">
+          <article>
+            {{ post.content }}
+          </article>
+        </div>
+      
+            
+        <div class="pc__likes">
+          {% if current_user.has_liked_post(post) %}
+              <a href="{{ url_for('like_action', post_id=post.id, action='unlike') }}" class="unlike-btn post-like"><img width="34" height="26" src="{{ url_for ('static', filename = 'website_images/heart.svg')}}" alt="Heart this"></a>
+              <div class="post-likes">
+                {% if current_user.has_liked_post(post) %}
+                
+                {% if post.likes.count() >= 2 %}
+                <p> You and {{ post.likes.count() }} others loved this post </p>
+
+                {% elif post.likes.count() > 1 %}
+                <p> You and 1 other liked this post</p>
+                
+                {% elif post.likes.count() == 1  %}
+                <p>You liked this post</p>
+              
+
+              
+                {% endif%}
+              {% endif%}
+              
+              </div>
+          {% else %}
+              <a href="{{ url_for('like_action', post_id=post.id, action='like') }} " class="like-btn post-like"><img width="34" height="26" src="{{ url_for ('static', filename = 'website_images/heartoutline.svg')}}" alt="unheart this"></i></a>
+          {% endif %}
+        </div>
+     
+      {% if current_user.id == post.author.id %}
+        <p class="pc__ops">
+          <a href="{{url_for('deletepost', post_id=post.id)}}">Delete</a>
+          <a href="{{url_for('updatepost', post_id=post.id)}}">Update</a>
+        </p>
+      {% endif %}
+      </div>
+    </section>
+
+{% endblock content %}

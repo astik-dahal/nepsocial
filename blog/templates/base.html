@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename = 'styles/style.css')}}"
+    />
+    <link
+      rel="stylesheet"
+      href="https://use.fontawesome.com/releases/v5.14.0/css/all.css"
+      integrity="sha384-HzLeBuhoNPvSl5KYnjx0BT+WB0QEEqLprO+NBkkk5gbc67FTaL7XIGa2w1L0Xbgc"
+      crossorigin="anonymous"
+    />
+    <title>
+      {{ title }}
+    </title>
+  </head>
+  <body>
+    <header>
+      <div class="container">
+          <div class="logo">
+            <a href="{{url_for('index')}}">nepsocial</a>
+          </div>
+          <input type="checkbox" class="nav-toggle" id="nav-toggle" />
+          <nav>
+            <ul class="nav-items">
+              {% if not current_user.is_authenticated %}
+              <li class="nav-item"><a href="{{url_for('index')}}">Home</a></li>
+              <li class="nav-item"><a href="{{url_for('login')}}">Login</a></li>
+              <li class="nav-item"><a href="{{url_for('register')}}">Register</a></li>
+              <li class="nav-item"><a href="{{url_for('about')}}">About</a></li>
+              
+              {% else %}
+              <li class="nav-item"><a href="{{url_for('index')}}">Home</a></li>
+              <li class="nav-item">
+                <a href="{{url_for('profile')}}">Profile</a>
+              </li>
+              <li class="nav-item">
+                <a href="{{url_for('addpost')}}">Add Post</a>
+              </li>
+              <li class="nav-item">
+                <a href="{{url_for('logout')}}">Logout</a>
+              </li>
+              {% endif %}
+            </ul>
+          </nav>
+          <label for="nav-toggle" class="nav-toggle-label">
+            <div class="hamburger">
+              <div class="line-1 line"></div>
+              <div class="line-2 line"></div>
+              <div class="line-3 line"></div>
+            </div>
+          </label>
+      </div>
+    </header>
+    <div class="flashed-messages">
+      <div class="container">
+        {% with messages = get_flashed_messages(with_categories=true) %} {% if
+        messages %}
+        <ul class="flashes">
+          {% for category, message in messages %}
+          <li class="{{ category }}">{{ message }}</li>
+          {% endfor %}
+        </ul>
+        {% endif %} {% endwith %}
+      </div>
+    </div>
+
+    <div class="container">
+      {% if current_user.is_authenticated %}
+        <div class="sidebar">
+            <div class="sidebar__container">
+              <div class="searchbar">
+                <form action="/search" method="GET">
+                  <input type="text" placeholder="Search" name="query" id="query">
+                </form>
+              </div>
+            </div>
+          </div>
+        {% endif %}
+      {% block content %}
+      {% endblock content %}
+    </div>
+  </body>
+</html>

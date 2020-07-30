@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+{% block title %}
+Reset Password
+{% endblock title %} 
+
+{% block body %}
+<main id="login">
+  <div class="container">
+    <section class="login__section form__section">
+     <div class="rt__container form__container">
+       <h1 class="rt__header form__header">Reset Password</h1>
+        <form class="form rt__form" action="" method="POST">
+            {{ form.hidden_tag() }}
+            <fieldset >
+                <p class="legend">Please enter your new password</p>
+                
+               
+              <div class="form-group">
+                  {{ form.password.label(class="form-control-label") }}
+                  {% if form.password.errors%}
+                  {{ form.password (class="form-control", placeholder="*********")}}
+                  <div class="invalid-feedback">
+                      {% for error in form.password.errors %}
+                      <span class="form-control-error" style="color: red;">{{error  }}</span>
+                      {% endfor %}
+                  </div>
+              {% else %}
+              {{ form.password (class="form-control", placeholder="*********")}}
+              {% endif %}
+              </div>
+              <div class="form-group">
+                {{ form.confirm_password.label(class="form-control-label") }}
+                {% if form.confirm_password.errors%}
+                {{ form.confirm_password (class="form-control", placeholder="*********")}}
+                <div class="invalid-feedback">
+                    {% for error in form.confirm_password.errors %}
+                    <span class="form-control-error" style="color: red;">{{error}}</span>
+                    {% endfor %}
+                </div>
+                {% else %}
+                    {{ form.confirm_password (class="form-control", placeholder="*********")}}
+                {% endif %}
+                </div>
+             
+                 <div class="form-group">
+                    {{ form.submit(class="submit-btn btn btn--primary") }}
+                 </div>
+             
+
+            </fieldset>
+        </form>
+     </div>
+    </section>
+  </div>
+</main>
+{% endblock body %}
