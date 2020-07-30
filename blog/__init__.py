@@ -1,58 +1,50 @@
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
-import os
 from flask_bcrypt import Bcrypt
 from flask_login import LoginManager
 from flask_script import Manager
 from flask_migrate import Migrate, MigrateCommand
 from flask_mail import Mail
 from flask_msearch import Search
-#app initializations
-app = Flask(__name__)
-
-
-
-#config files
-app.config['SECRET_KEY'] = os.urandom(24)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///posts.db'
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True
-app.config['confirm_deleted_rows'] = False
-app.config['MAIL_SERVER'] = 'smtp.googlemail.com'
-app.config['MAIL_PORT'] = '587'
-app.config['MAIL_USE_TLS'] = '587'
-app.config['MAIL_USERNAME'] = os.environ.get('EMAIL_USER')
-app.config['MAIL_PASSWORD'] = os.environ.get('EMAIL_PASSWORD')
-mail  = Mail(app)
-
-# initializing the database
-db = SQLAlchemy(app)
-
-#initializing MSEARCH for searching databases
-search = Search(app)
-
-# flask migrate app creation
-migrate = Migrate(app, db)
-
-manager = Manager(app)
-manager.add_command('db', MigrateCommand)
- 
-# bcrypt init
-bcrypt = Bcrypt(app)
-
-#http auth
-from flask_httpauth import HTTPBasicAuth 
-auth = HTTPBasicAuth()
-
-#marshmallow object serializer 
+from blog.config import Config 
+from flask_httpauth import HTTPBasicAuth, HTTPAuth
 from flask_marshmallow import Marshmallow
-ma = Marshmallow(app)
 
-# flask login manager
-login_manager = LoginManager(app)
-
-
-#redirecting to login page when user!=loggedin (when redirected by @loginrequired)
-login_manager.login_view = 'login'
+db = SQLAlchemy()
+bcrypt = Bcrypt()
+login_manager = LoginManager()
+login_manager.login_view = 'users.login'
 login_manager.login_message_category = 'info'
+mail  = Mail()
+manager = Manager()
+migrate = Migrate()
+search = Search()
+ma = Marshmallow()
+auth = HTTPAuth()
+manager.add_command('db', MigrateCommand)
 
-from blog import routes, errors, api_routes
+def create_app(config_class=Config):
+    app = Flask(__name__)
+    app.config.from_object(Config)
+
+    db.init_app(app)
+    bcrypt.init_app(app)
+    login_manager.init_app(app)
+    mail.init_app(app)
+    ma.init_app(app)
+    migrate.init_app(app, db)
+    search.init_app(app)
+
+    # BLUEPRINTS
+    from blog.users.routes import users
+    from blog.main.routes import main
+    from blog.posts.routes import posts
+    from blog.API.routes import api
+
+    app.register_blueprint(users)
+    app.register_blueprint(main)
+    app.register_blueprint(posts)
+    app.register_blueprint(api)
+
+
+    return app

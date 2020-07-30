@@ -1,20 +1,14 @@
 {% extends "base.html" %}
-{% block title %}
-Reset Password
-{% endblock title %} 
 
-{% block body %}
-<main id="login">
-  <div class="container">
-    <section class="login__section form__section">
-     <div class="rt__container form__container">
-       <h1 class="rt__header form__header">Reset Password</h1>
-        <form class="form rt__form" action="" method="POST">
-            {{ form.hidden_tag() }}
-            <fieldset >
-                <p class="legend">Please enter your new password</p>
-                
-               
+{% block content %}
+<section class="reset-token">
+  <div class="rt__container form__container">
+    <h1 class="rtc__header form__header">Update Password</h1>
+    <form class="form rtc__form" action="" method="POST">
+        {{ form.hidden_tag() }}
+        <fieldset >
+            <p class="form__legend rtcf__legend">Enter your new password</p>
+            
               <div class="form-group">
                   {{ form.password.label(class="form-control-label") }}
                   {% if form.password.errors%}
@@ -51,6 +45,5 @@ Reset Password
         </form>
      </div>
     </section>
-  </div>
-</main>
+
 {% endblock body %}

@@ -21,27 +21,27 @@
     <header>
       <div class="container">
           <div class="logo">
-            <a href="{{url_for('index')}}">nepsocial</a>
+            <a href="{{url_for('main.index')}}">nepsocial</a>
           </div>
           <input type="checkbox" class="nav-toggle" id="nav-toggle" />
           <nav>
             <ul class="nav-items">
               {% if not current_user.is_authenticated %}
-              <li class="nav-item"><a href="{{url_for('index')}}">Home</a></li>
-              <li class="nav-item"><a href="{{url_for('login')}}">Login</a></li>
-              <li class="nav-item"><a href="{{url_for('register')}}">Register</a></li>
-              <li class="nav-item"><a href="{{url_for('about')}}">About</a></li>
+              <li class="nav-item"><a href="{{url_for('main.index')}}">Home</a></li>
+              <li class="nav-item"><a href="{{url_for('users.login')}}">Login</a></li>
+              <li class="nav-item"><a href="{{url_for('users.register')}}">Register</a></li>
+              <li class="nav-item"><a href="{{url_for('main.about')}}">About</a></li>
               
               {% else %}
-              <li class="nav-item"><a href="{{url_for('index')}}">Home</a></li>
+              <li class="nav-item"><a href="{{url_for('main.index')}}">Home</a></li>
               <li class="nav-item">
-                <a href="{{url_for('profile')}}">Profile</a>
+                <a href="{{url_for('users.profile')}}">Profile</a>
               </li>
               <li class="nav-item">
-                <a href="{{url_for('addpost')}}">Add Post</a>
+                <a href="{{url_for('posts.addpost')}}">Add Post</a>
               </li>
               <li class="nav-item">
-                <a href="{{url_for('logout')}}">Logout</a>
+                <a href="{{url_for('users.logout')}}">Logout</a>
               </li>
               {% endif %}
             </ul>

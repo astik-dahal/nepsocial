@@ -1,5 +1,6 @@
 from datetime import datetime
-from blog import db, login_manager, app, bcrypt, ma
+from flask import current_app
+from blog import db, login_manager,bcrypt, ma
 
 #python object serializer
 from marshmallow_sqlalchemy import SQLAlchemyAutoSchema
@@ -46,16 +47,16 @@ class User(db.Model, UserMixin):
         return bcrypt.check_password_hash(password, self.password)
 
     def get_reset_token(self, expires_sec=1800):
-        s = Serializer(app.config['SECRET_KEY'], expires_sec)
+        s = Serializer(current_app.config['SECRET_KEY'], expires_sec)
         return s.dumps({'user_id': self.id}).decode('utf-8')
 
     def get_verification_token(self, expires_sec=1800):
-        s = Serializer(app.config['SECRET_KEY'], expires_sec)
+        s = Serializer(current_app.config['SECRET_KEY'], expires_sec)
         return s.dumps({'user_id': self.id}).decode('utf-8')
 
     @staticmethod
     def verify_user_token(token):
-        s = Serializer(app.config['SECRET_KEY'])
+        s = Serializer(current_app.config['SECRET_KEY'])
         try:
             user_id = s.loads(token)['user_id']
         except:
@@ -68,14 +69,14 @@ class User(db.Model, UserMixin):
             'id': self.id,
             'exp': time.time() + expires_in
         },
-                          app.config['SECRET_KEY'],
+                          current_app.config['SECRET_KEY'],
                           algorithm='HS256')
 
     @staticmethod
     def verify_auth_token(token):
         try:
             data = jwt.decode(token,
-                              app.config['SECRET_KEY'],
+                              current_app.config['SECRET_KEY'],
                               algorithms=['HS256'])
         except:
             return

@@ -1,30 +1,13 @@
-from flask import jsonify, make_response, url_for, request, g
+from flask import jsonify, make_response, url_for, request, Blueprint
 from blog.models import User, Post, UserMixin, PostLike
-from blog import bcrypt, app, db
+from blog import bcrypt, db
 from itsdangerous import (TimedJSONWebSignatureSerializer as Serializer,
                           BadSignature, SignatureExpired)
 from blog import auth
 
-#import schemas for data serialization
-from blog.models import UserSchema, PostSchema, PostLikeSchema
-def custom_error(message, status_code):
-    return make_response(jsonify({'error': message}), status_code)
+api = Blueprint('api', __name__)
 
-@auth.verify_password
-def verify_password(username_or_token, password):
-    # first try to authenticate by token
-    user = User.verify_auth_token(username_or_token)
-    hashed_pw = bcrypt.generate_password_hash(password)
-    if not user:
-        # try to authenticate with username/password
-        user = User.query.filter_by(username=username_or_token).first()
-        if not user or not bcrypt.check_password_hash(hashed_pw, password):
-            return False
-    g.user = user
-    return True
-
-
-@app.route('/api/token')
+@api.route('/api/token')
 @auth.login_required
 def get_auth_token():
     token = g.user.generate_auth_token(3600)
@@ -32,7 +15,7 @@ def get_auth_token():
 
 
 
-@app.route('/api/users', methods=['GET'])
+@api.route('/api/users', methods=['GET'])
 @auth.login_required
 def get_users():
     users_schema = UserSchema(many=True)
@@ -42,7 +25,7 @@ def get_users():
     })
 
 
-@app.route('/api/users/<int:user_id>', methods=['GET'])
+@api.route('/api/users/<int:user_id>', methods=['GET'])
 @auth.login_required
 def get_user(user_id):
     user_schema = UserSchema()
@@ -54,7 +37,7 @@ def get_user(user_id):
     })
 
 
-@app.route('/api/users', methods=['POST'])
+@api.route('/api/users', methods=['POST'])
 @auth.login_required
 def add_user():
     username = request.json.get('username')
@@ -88,11 +71,11 @@ def add_user():
         'username': user.username,
         'email': user.email
     }), 201, {
-        'Location': url_for('get_user', user_id=user.id, _external=True)
+        'Location': url_for('api.get_user', user_id=user.id, _external=True)
     }
 
 
-@app.route('/api/users/<int:user_id>', methods=['PUT'])
+@api.route('/api/users/<int:user_id>', methods=['PUT'])
 @auth.login_required
 def update_user(user_id):
     username = request.json.get('username')
@@ -129,7 +112,7 @@ def update_user(user_id):
     ), 201
 
 
-@app.route('/api/users/<int:user_id>', methods=['DELETE'])
+@api.route('/api/users/<int:user_id>', methods=['DELETE'])
 @auth.login_required
 def delete_user(user_id):
     if request.json is None:
@@ -148,7 +131,7 @@ def delete_user(user_id):
         }
     ), 201
 
-@app.route('/api/posts', methods=['GET'])
+@api.route('/api/posts', methods=['GET'])
 @auth.login_required
 def get_posts():
     posts_schema = PostSchema(many = True)
@@ -159,7 +142,7 @@ def get_posts():
         }
     )
 
-@app.route('/api/posts/<int:post_id>', methods=['GET'])
+@api.route('/api/posts/<int:post_id>', methods=['GET'])
 @auth.login_required
 def get_post(post_id):
     post = Post.query.get(post_id)
@@ -170,7 +153,7 @@ def get_post(post_id):
        'post':post_schema.dump(post)
     })
 
-@app.route('/api/posts', methods=['POST'])
+@api.route('/api/posts', methods=['POST'])
 @auth.login_required
 def add_post():
     title = request.json.get('title')
@@ -195,7 +178,7 @@ def add_post():
         }
     ), 201
  
-@app.route('/api/posts/<int:post_id>', methods=['PUT'])
+@api.route('/api/posts/<int:post_id>', methods=['PUT'])
 @auth.login_required
 def update_post(post_id):
     
@@ -226,7 +209,7 @@ def update_post(post_id):
     ), 201
 
     
-@app.route('/api/posts/<int:post_id>', methods=['DELETE'])
+@api.route('/api/posts/<int:post_id>', methods=['DELETE'])
 @auth.login_required
 def delete_post(post_id):
     
@@ -250,7 +233,7 @@ def delete_post(post_id):
 
 
 
-@app.route('/api/postlikes', methods=['GET'])
+@api.route('/api/postlikes', methods=['GET'])
 @auth.login_required
 def postlikes():
     postlikes_schema = PostLikeSchema(many = True)
@@ -261,7 +244,7 @@ def postlikes():
         }
     )
 
-@app.route('/api/<int:user_id>/<int:post_id>/<action>', methods=['POST'])
+@api.route('/api/<int:user_id>/<int:post_id>/<action>', methods=['POST'])
 @auth.login_required
 def post_like(user_id,post_id, action):
     post = Post.query.get(post_id)

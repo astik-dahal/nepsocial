@@ -8,7 +8,7 @@
             <h3>Users: </h3>
             {% for user in users %}
             <li class="user">
-                <a href="{{url_for('user_posts', username = user.username)}}">{{ user.username }}</a>
+                <a href="{{url_for('users.user_posts', username = user.username)}}">{{ user.username }}</a>
             </li>
             {% endfor %}
         {% else %}
@@ -17,12 +17,13 @@
         {% endif %}
         {% if posts %}
         <ul class="post-results">
+            <h3>Posts: </h3>
             {% for post in posts %}
             <li class="post-result">
                 <p class="post-title">
                     {{ post.title }}
                 </p>
-                <a href="{{ url_for('post', id=post.id) }}">{{ post.content }}</a>
+                <a href="{{ url_for('posts.post', id=post.id) }}">{{ post.content }}</a>
             </li>
             {% endfor %}
             {% else %}

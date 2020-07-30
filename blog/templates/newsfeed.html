@@ -16,7 +16,7 @@
             
               <div class="p-item__subheader">
                 <div class="p-item-sub__author">
-                  <a href="{{ url_for('user_posts', username = post.author.username)}}">{{ post.author.username}}</a> 
+                  <a href="{{ url_for('users.user_posts', username = post.author.username)}}">{{ post.author.username}}</a> 
                   </div>
                
                 <p class="p-item-sub__category">{{ post.category }}</p>
@@ -26,7 +26,7 @@
                 </div>
             
           </div>
-            <a  href="{{ url_for('post', id = post.id)}}" class="p-item__content">
+            <a  href="{{ url_for('posts.post', id = post.id)}}" class="p-item__content">
               <p>
               {{ post.content }}
               </p>
@@ -42,9 +42,9 @@
     {% for page_num in posts.iter_pages(left_edge=1, left_current=1, right_current=2, right_edge=1) %}
     {% if page_num %}
       {% if posts.page == page_num %}
-        <a class="btn btn--primary" href="{{ url_for('index', page = page_num) }} ">{{page_num}}</a>
+        <a class="btn btn--primary" href="{{ url_for('main.index', page = page_num) }} ">{{page_num}}</a>
       {% else %}
-        <a class="btn btn--outline" href="{{ url_for('index', page = page_num) }} ">{{page_num}}</a>
+        <a class="btn btn--outline" href="{{ url_for('main.index', page = page_num) }} ">{{page_num}}</a>
       {% endif %}
       
     {% else %}
