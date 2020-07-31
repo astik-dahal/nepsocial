@@ -1,7 +1,7 @@
 import os
 
 class Config:
-    SECRET_KEY = '799e571239fb6a25aa2de9766f0fb172a7bd1d2e598872ea'
+    SECRET_KEY = os.urandom(24).hex()
     SQLALCHEMY_DATABASE_URI = 'sqlite:///posts.db'
     SQLALCHEMY_TRACK_MODIFICATIONS = True
     confirm_deleted_rows = False
