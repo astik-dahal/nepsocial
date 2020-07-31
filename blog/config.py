@@ -1,8 +1,9 @@
 import os
+basedir = os.path.abspath(os.path.dirname(__file__))
 
 class Config:
     SECRET_KEY = os.urandom(24).hex()
-    SQLALCHEMY_DATABASE_URI = 'sqlite:///posts.db'
+    SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL')
     SQLALCHEMY_TRACK_MODIFICATIONS = True
     confirm_deleted_rows = False
     MAIL_SERVER = 'smtp.googlemail.com'

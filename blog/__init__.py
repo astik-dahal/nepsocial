@@ -16,12 +16,12 @@ login_manager = LoginManager()
 login_manager.login_view = 'users.login'
 login_manager.login_message_category = 'info'
 mail  = Mail()
-manager = Manager()
+# manager = Manager()
 migrate = Migrate()
 search = Search()
 ma = Marshmallow()
 auth = HTTPAuth()
-manager.add_command('db', MigrateCommand)
+# manager.add_command('db', MigrateCommand)
 
 def create_app(config_class=Config):
     app = Flask(__name__)
@@ -34,7 +34,7 @@ def create_app(config_class=Config):
     ma.init_app(app)
     migrate.init_app(app, db)
     search.init_app(app)
-
+    
     # BLUEPRINTS
     from blog.users.routes import users
     from blog.main.routes import main

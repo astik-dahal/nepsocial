@@ -1,8 +1,8 @@
-"""Initialization
+"""initialized
 
-Revision ID: aa99b4787ed5
+Revision ID: 1027ed0b1e78
 Revises: 
-Create Date: 2020-07-18 17:38:16.616374
+Create Date: 2020-07-31 08:59:19.665505
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = 'aa99b4787ed5'
+revision = '1027ed0b1e78'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -24,6 +24,7 @@ def upgrade():
     sa.Column('email', sa.String(length=120), nullable=False),
     sa.Column('password', sa.String(length=36), nullable=False),
     sa.Column('profile_image', sa.String(length=60), nullable=True),
+    sa.Column('confirmed', sa.Boolean(), nullable=True),
     sa.PrimaryKeyConstraint('id'),
     sa.UniqueConstraint('email'),
     sa.UniqueConstraint('username')
@@ -31,10 +32,10 @@ def upgrade():
     op.create_table('post',
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('date_posted', sa.DateTime(), nullable=True),
-    sa.Column('title', sa.String(length=100), nullable=True),
-    sa.Column('content', sa.String(length=600), nullable=False),
+    sa.Column('title', sa.String(length=90), nullable=True),
+    sa.Column('content', sa.String(length=3000), nullable=False),
     sa.Column('image_file', sa.String(length=60), nullable=True),
-    sa.Column('category', sa.String(length=10), nullable=True),
+    sa.Column('category', sa.String(length=20), nullable=True),
     sa.Column('user_id', sa.Integer(), nullable=False),
     sa.ForeignKeyConstraint(['user_id'], ['user.id'], ),
     sa.PrimaryKeyConstraint('id')
