@@ -1,7 +1,6 @@
 from blog import create_app, db
 from blog.models import User, Post
 from flask.cli import with_appcontext
-import click
 
 app = create_app()
 
