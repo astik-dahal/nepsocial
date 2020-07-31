@@ -4,7 +4,7 @@ NEPSOCIAL, a simple social media for greater cause
 '/api/token', methods = ['GET']
 -get a valid token
 
-#'/api/users', methods=['GET']
+'/api/users', methods=['GET']
 -get complete user's datalist
 
 '/api/users/<int:user_id>', methods=['GET']
