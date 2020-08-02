@@ -16,12 +16,7 @@ class RegistrationForm(FlaskForm):
                                 Length(min=8, max=32)])
     confirm_password = PasswordField(
         'Confirm Password',
-        validators=[
-            DataRequired(),
-            EqualTo('password',
-                    message="Must be equal to the original password!")
-        ],
-    )
+        validators=[ DataRequired(),EqualTo('password',message="Must be equal to the original password!")])
     submit = SubmitField('Register')
 
     def validate_username(self, username):
@@ -39,9 +34,7 @@ class RegistrationForm(FlaskForm):
 
 class LoginForm(FlaskForm):
     email = StringField('Email', validators=[DataRequired(), Email()])
-    password = PasswordField(
-        'Password', validators=[DataRequired(),
-                                Length(min=8, max=32)])
+    password = PasswordField('Password', validators=[DataRequired(), Length(min=8, max=32)])
     remember = BooleanField('Remember Me')
     submit = SubmitField('Login')
 
@@ -50,6 +43,9 @@ class LoginForm(FlaskForm):
         if user is None:
             raise ValidationError(
                 "Hmm, we can't find an account with that email")
+        # if user.confirmed is None:
+        #     raise ValidationError(
+        #         "Unverified email")
 
 
 class UpdateAccountForm(FlaskForm):
@@ -57,10 +53,13 @@ class UpdateAccountForm(FlaskForm):
     username = StringField('New Username',
                            validators=[DataRequired(),
                                        Length(min=4, max=12)])
-    # password = PasswordField('New Password', validators=[DataRequired(), Length(min=8, max=32)])
-    # confirm_password = PasswordField('Confirm New Password', validators=[DataRequired(), EqualTo('password', message="Must be equal to the original password!")])
-    picture = FileField('Change Profile Picture',
-                        validators=[FileAllowed(['jpg', 'png'])])
+    password = PasswordField('New Password', validators=[DataRequired(), Length(min=8, max=32)])
+    confirm_password = PasswordField('Confirm New Password', validators=[DataRequired(), EqualTo('password', message="Must be equal to the original password!")])
+    # picture = FileField('Change Profile Picture',
+    #                     validators=[FileAllowed(['jpg', 'png'])])
+    picture = FileField('Change Profile Picture', validators =[
+        FileAllowed(['jpg', 'png'], message="Invalid file type. Upload JPG or PNG")
+    ])
     submit = SubmitField('Update')
 
     def validate_username(self, username):
@@ -76,7 +75,7 @@ class UpdateAccountForm(FlaskForm):
             if user:
                 raise ValidationError(
                     'That email is taken. Please choose a different one.')
-
+    
 
 class RequestResetForm(FlaskForm):
     email = StringField('Email', validators=[DataRequired(), Email()])

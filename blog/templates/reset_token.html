@@ -15,7 +15,7 @@
                   {{ form.password (class="form-control", placeholder="*********")}}
                   <div class="invalid-feedback">
                       {% for error in form.password.errors %}
-                      <span class="form-control-error" style="color: red;">{{error  }}</span>
+                      <span class="form-control-error"  >{{error  }}</span>
                       {% endfor %}
                   </div>
               {% else %}
@@ -28,7 +28,7 @@
                 {{ form.confirm_password (class="form-control", placeholder="*********")}}
                 <div class="invalid-feedback">
                     {% for error in form.confirm_password.errors %}
-                    <span class="form-control-error" style="color: red;">{{error}}</span>
+                    <span class="form-control-error"  >{{error}}</span>
                     {% endfor %}
                 </div>
                 {% else %}

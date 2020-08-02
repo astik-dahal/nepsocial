@@ -25,22 +25,34 @@
           </div>
           <input type="checkbox" class="nav-toggle" id="nav-toggle" />
           <nav>
-            <ul class="nav-items">
+            <ul id="nav-items">
               {% if not current_user.is_authenticated %}
-              <li class="nav-item"><a href="{{url_for('main.index')}}">Home</a></li>
-              <li class="nav-item"><a href="{{url_for('users.login')}}">Login</a></li>
-              <li class="nav-item"><a href="{{url_for('users.register')}}">Register</a></li>
-              <li class="nav-item"><a href="{{url_for('main.about')}}">About</a></li>
+              <li {% if request.path == url_for("main.index") %}class="nav-item active" {% else %} class="nav-item" {% endif %} >
+                <a href="{{url_for('main.index')}}">Home</a>
+              </li>
+              
+              <li {% if request.path == url_for("users.login") %}class="nav-item active" {% else %} class="nav-item" {% endif %} >
+                <a href="{{url_for('users.login')}}">Login</a></li>
+              
+              <li {% if request.path == url_for("users.register") %}class="nav-item active" {% else %} class="nav-item" {% endif %} >
+                <a href="{{url_for('users.register')}}">Register</a>
+              </li>
+              
+              <li {% if request.path == url_for("main.about") %}class="nav-item active" {% else %} class="nav-item" {% endif %} >
+                <a href="{{url_for('main.about')}}">About</a>
+              </li>
               
               {% else %}
-              <li class="nav-item"><a href="{{url_for('main.index')}}">Home</a></li>
-              <li class="nav-item">
+              <li {% if request.path == url_for("main.index") %}class="nav-item active" {% else %} class="nav-item" {% endif %} >
+                <a href="{{url_for('main.index')}}">Home</a>
+              </li>
+              <li {% if request.path == url_for("users.profile") %}class="nav-item active" {% else %} class="nav-item" {% endif %} >
                 <a href="{{url_for('users.profile')}}">Profile</a>
               </li>
-              <li class="nav-item">
+              <li {% if request.path == url_for("posts.addpost") %}class="nav-item active" {% else %} class="nav-item" {% endif %} >
                 <a href="{{url_for('posts.addpost')}}">Add Post</a>
               </li>
-              <li class="nav-item">
+              <li {% if request.path == url_for("users.logout") %}class="nav-item active" {% else %} class="nav-item" {% endif %} >
                 <a href="{{url_for('users.logout')}}">Logout</a>
               </li>
               {% endif %}
@@ -55,19 +67,20 @@
           </label>
       </div>
     </header>
-    <div class="flashed-messages">
-      <div class="container">
-        {% with messages = get_flashed_messages(with_categories=true) %} {% if
-        messages %}
-        <ul class="flashes">
-          {% for category, message in messages %}
-          <li class="{{ category }}">{{ message }}</li>
-          {% endfor %}
-        </ul>
-        {% endif %} {% endwith %}
+    {% with messages = get_flashed_messages(with_categories=true) %}
+     {% if messages %}
+      <div class="flashed-messages">
+        <div class="container">
+          <ul class="flashes">
+            {% for category, message in messages %}
+            <li class="{{ category }}">{{ message }}</li>
+            {% endfor %}
+          </ul>
+        </div>
       </div>
-    </div>
-
+      {% endif %} 
+    {% endwith %}
+ 
     <div class="container">
       {% if current_user.is_authenticated %}
         <div class="sidebar">
@@ -83,5 +96,6 @@
       {% block content %}
       {% endblock content %}
     </div>
+    
   </body>
 </html>

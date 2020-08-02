@@ -3,22 +3,29 @@ from flask_login import login_user, current_user, logout_user, login_required
 from blog import db, bcrypt
 from blog.models import User, Post
 from blog.users.forms import (RegistrationForm, LoginForm, UpdateAccountForm,
-                                   RequestResetForm, ResetPasswordForm)
+                              RequestResetForm, ResetPasswordForm)
 from blog.users.utils import save_post_picture, save_profile_picture, send_verification_email, send_reset_email
-users = Blueprint('users',__name__)
-
+from werkzeug.utils import secure_filename
+users = Blueprint('users', __name__)
 
 
 @users.route("/profile", methods=['GET', 'POST'])
 @login_required
 def profile():
     form = UpdateAccountForm()
-    if request.method == "POST":
-        if form.picture.data:
-            picture_file = save_profile_picture(form.picture.data)
-            current_user.profile_image = picture_file
+    if form.validate_on_submit():
+        form_picture = form.picture.data
+        if form_picture :
+            picture_file = save_profile_picture(form_picture)
+            if picture_file:
+                current_user.profile_image = picture_file
+            else:
+                flash("Unsupported file type. Please upload .JPG or .PNG")
+                return redirect(url_for('users.profile'))
         current_user.username = form.username.data
         current_user.email = form.email.data
+        hashed_pw = bcrypt.generate_password_hash(form.password.data)
+        current_user.password = hashed_pw
         db.session.commit()
         flash('Your account has been updated!', 'success')
         return redirect(url_for('users.profile'))
@@ -28,22 +35,29 @@ def profile():
     profile_image = url_for('static',
                             filename='profile_pics/' +
                             current_user.profile_image)
-    page = request.args.get('page', 1, type = int)
-    user = User.query.filter_by(username = current_user.username).first()
-    posts = Post.query.filter_by(author = user).order_by(Post.date_posted.desc()).paginate(per_page = 10, page = page)
+    page = request.args.get('page', 1, type=int)
+    user = User.query.filter_by(username=current_user.username).first()
+    posts = Post.query.filter_by(author=user).order_by(
+        Post.date_posted.desc()).paginate(per_page=10, page=page)
     return render_template('profile.html',
                            title='Account',
                            profile_image=profile_image,
                            form=form,
-                           posts = posts)
+                           posts=posts)
+
 
 @users.route('/profile/<string:username>', methods=['GET', 'POST'])
 @login_required
 def user_posts(username):
-    page = request.args.get('page', 1, type = int)
-    user = User.query.filter_by(username = username).first_or_404()
-    posts = Post.query.filter_by(author = user).order_by(Post.date_posted.desc()).paginate(page = page, per_page = 10)
-    return render_template('user_posts.html', posts = posts, user = user, title = "User Post")
+    page = request.args.get('page', 1, type=int)
+    user = User.query.filter_by(username=username).first_or_404()
+    posts = Post.query.filter_by(author=user).order_by(
+        Post.date_posted.desc()).paginate(page=page, per_page=10)
+    return render_template('user_posts.html',
+                           posts=posts,
+                           user=user,
+                           )
+
 
 @users.route('/login', methods=['GET', 'POST'])
 def login():
@@ -55,19 +69,20 @@ def login():
         user = User.query.filter_by(email=form.email.data).first()
         if user and bcrypt.check_password_hash(user.password,
                                                form.password.data):
-            if user.confirmed :
-                print("CONFIRMED")
+            if user.confirmed:
                 login_user(user, remember=form.remember.data)
                 next_page = request.args.get('next')
                 return redirect(next_page) if next_page else redirect(
                     url_for('main.index'))
             else:
+                #todo
+                #if a user raises user.confirmed is None: show a link to send verification 
+                #on html 
                 send_verification_email(user)
-                flash("An email has been sent to your email address. ", "info")
-                return render_template('login.html', form = form)
-        elif user is None:
-            flash("The user doesnot exist, register now to continue", "warning")
-            return redirect(url_for('users.register'))
+                flash(
+                    "Verification email has been sent to your email address. ",
+                    "info")
+                return render_template('login.html', form=form)
         else:
             flash("Wrong credentials, please try again", "error")
             return render_template('login.html', form=form)
@@ -132,44 +147,49 @@ def reset_token(token):
     return render_template('reset_token.html', form=form)
 
 
-@users.route('/register', methods = ['POST', 'GET'])
+@users.route('/register', methods=['POST', 'GET'])
 def register():
     if current_user.is_authenticated:
         return redirect(url_for('main.index'))
+
     form = RegistrationForm()
     if form.validate_on_submit():
         hashed_pw = bcrypt.generate_password_hash(
-            form.password.data
-        ).decode('utf-8')
-        user = User(username = form.username.data,
-                    email = form.email.data,
-                    password = hashed_pw,
-                    confirmed = False)
+            form.password.data).decode('utf-8')
+        user = User(username=form.username.data,
+                    email=form.email.data,
+                    password=hashed_pw,
+                    confirmed=False)
+        db.session.add(user)
+        db.session.commit()
         try:
             send_verification_email(user)
-            flash("A verification email has been sent to your email id.", 'success')
+            flash("A verification email has been sent to your email id.",
+                  'success')
             return redirect(url_for('users.login'))
-        except: 
-            flash("An error occured while sending email. Try again in a moment!", 'error')
+        except:
+            flash(
+                "An error occured while sending email. Try again in a moment!",
+                'error')
             return redirect(url_for('users.login'))
-        flash("A verification email has been sent to your email id.", 'success')
-        
-    return render_template('register.html', form = form)
+    return render_template('register.html', form=form)
 
-@users.route('/register/<token>', methods = ['POST', 'GET'])
+
+@users.route('/register/<token>', methods=['POST', 'GET'])
 def email_token(token):
     if current_user.is_authenticated:
         return redirect(url_for('main.index'))
-    form = LoginForm()
-   
+
     user = User.verify_user_token(token)
+
     if user is None:
         flash('That token is invalid or has already expired', 'warning')
-        return redirect(url_for('users.register'))
+        return redirect(url_for('users.login'))
+
     else:
         user.confirmed = True
         db.session.commit()
-        flash('Email is now verified, please login to continue', 'success')
+        flash('Email verified successfully', 'success')
         return redirect(url_for('users.login'))
-    return render_template('login.html', form = form)
- 
+    form = LoginForm()
+    return render_template('login.html', form=form)

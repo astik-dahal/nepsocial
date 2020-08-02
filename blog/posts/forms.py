@@ -5,19 +5,19 @@ from flask_wtf.file import FileField, FileAllowed, FileRequired
 
 class AddPostForm(FlaskForm):
     title = StringField('Title', validators=[DataRequired(), Length(min=5, max=100, message="Enter a title with more than 5 characters")])
-    content = StringField('Content', validators=[DataRequired(), Length(min=10, max=3600,  message="Enter content with more than 10 characters")])
+    content = TextAreaField('Content', validators=[DataRequired(), Length(min=10, max=3600,  message="Enter content with more than 10 characters")])
     image_file = FileField('Add an image', validators =[
-        FileAllowed(['jpg', 'png'])
+        FileAllowed(['jpg', 'png'], message="Invalid file type. Upload JPG or PNG")
     ])
     category = SelectField('Post privacy', choices=[('Public', 'Public'),('Private', 'Private')])
     submit = SubmitField('Add Post')
-    
-    
+
+
 class UpdatePostForm(FlaskForm):
     title = StringField('Title', validators=[DataRequired(), Length(min=5, max=100, message="Enter a title with more than 5 characters")])
-    content = StringField('Content', validators=[DataRequired(), Length(min=10, max=600,  message="Enter content with more than 10 characters")])
+    content = TextAreaField('Content', validators=[DataRequired(), Length(min=10, max=600,  message="Enter content with more than 10 characters")])
     image_file = FileField('Add an image', validators =[
-        FileAllowed(['jpg', 'png'])
+        FileAllowed(['jpg', 'png'],  message="Invalid file type. Upload JPG or PNG")
     ])
     category = SelectField('Post privacy', choices=[('Public', 'Public'),('Private', 'Private')])
     submit = SubmitField('Update Post')

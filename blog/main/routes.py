@@ -11,7 +11,8 @@ def index():
     if current_user.is_authenticated:
         page = request.args.get('page', 1, type=int)
         posts = Post.query.order_by(Post.date_posted.desc()).paginate(
-            page=page, per_page=10)
+            page=page, per_page=15)
+        
         return render_template("newsfeed.html", posts=posts)
     else:
         return render_template('index.html')
@@ -26,7 +27,7 @@ def about():
 @login_required
 def search():
     query = request.args.get('query')
-    if query is '':
+    if query == '':
         return render_template('search.html', users=None, posts=None)
     posts = Post.query.msearch(query, fields=['title', 'content'])
     users = User.query.msearch(query, fields=['username'])

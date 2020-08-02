@@ -3,7 +3,7 @@ from flask_login import current_user, login_required
 from blog import db
 from blog.models import Post
 from blog.posts.forms import AddPostForm, UpdatePostForm
-
+from blog.users.utils import save_post_picture
 posts = Blueprint('posts', __name__)
 
 
@@ -31,18 +31,22 @@ def like_action(post_id, action):
 @login_required
 def addpost():
     form = AddPostForm()
-    if request.method == "POST":
-        if form.image_file.data:
-            picture_file = save_post_picture(form.image_file.data)
-            post = Post(title=form.title.data,
-                        content=form.content.data,
-                        image_file=picture_file,
-                        category=form.category.data,
-                        user_id=current_user.id)
-            db.session.add(post)
-            db.session.commit()
-            return redirect(url_for('main.index'))
-
+    if form.validate_on_submit():
+        form_picture = form.image_file.data
+        if form_picture :
+            picture_file = save_post_picture(form_picture)
+            if picture_file:
+                post = Post(title=form.title.data,
+                            content=form.content.data,
+                            image_file=picture_file,
+                            category=form.category.data,
+                            user_id=current_user.id)
+                db.session.add(post)
+                db.session.commit()
+                return redirect(url_for('main.index'))
+            else:
+                flash("Unsupported file type. Please upload .JPG or .PNG")
+                return redirect(url_for('posts.addpost'))
         post = Post(title=form.title.data,
                     content=form.content.data,
                     category=form.category.data,
@@ -60,29 +64,35 @@ def updatepost(post_id):
     post = Post.query.get_or_404(post_id)
     if current_user.id == post.author.id:
         form = UpdatePostForm()
-        if request.method == 'POST':
-            if form.image_file.data:
-                picture_file = save_post_picture(form.image_file.data)
-                post = Post(title=form.title.data,
-                            content=form.content.data,
-                            image_file=picture_file,
-                            category=form.category.data,
-                            user_id=current_user.id)
-                db.session.commit()
-                flash("Post updated successfully", "success")
-                return redirect(url_for('posts.post', id=post_id))
-
-            post = Post(title=form.title.data,
-                        content=form.content.data,
-                        category=form.category.data,
-                        user_id=current_user.id)
+        if form.validate_on_submit():
+            form_picture = form.image_file.data
+            if form_picture:
+                picture_file = save_post_picture(form_picture)
+                if picture_file:
+                    post.title = form.title.data
+                    post.content = form.content.data
+                    post.image_file = picture_file
+                    post.category = form.category.data
+                    db.session.commit()
+                    flash("Post updated successfully", "success")
+                    return redirect(url_for('posts.post', id=post_id))
+                else:
+                    flash("Unsupported file type. Please upload .JPG or .PNG")
+                    return redirect(url_for('posts.updatepost'))
+            post.title = form.title.data
+            post.content = form.content.data
+            post.image_file = form.image_file.data
+            post.category = form.category.data
             db.session.commit()
             flash("Post updated successfully", "success")
             return redirect(url_for('posts.post', id=post_id))
-        elif request.method == 'GET':
+        if request.method == 'GET':
             form.title.data = post.title
             form.content.data = post.content
-        return render_template('updatepost.html', form=form)
+            form.image_file.data = post.image_file
+            return render_template('updatepost.html', form=form)
+        else:
+            return render_template('updatepost.html', form=form)
     else:
         return render_template('403.html'), 403
 

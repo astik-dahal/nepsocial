@@ -5,41 +5,38 @@
 
 <section class="newsfeed">
   <div class="feed">
+
     <ul class="posts">
       {% for post in posts.items %}
         {% if post.category == 'Public' %}
           <li class="posts__item">
-            
-            <div class="p-item__header">
-              
-              <h2 class="p-item__title">{{ post.title }}</h2>
-            
-              <div class="p-item__subheader">
-                <div class="p-item-sub__author">
-                  <a href="{{ url_for('users.user_posts', username = post.author.username)}}">{{ post.author.username}}</a> 
-                  </div>
-               
-                <p class="p-item-sub__category">{{ post.category }}</p>
-               
-                <p class="p-item-sub__dateposted"> <span>{{ post.date_posted.strftime("%d %b, %Y") }} </span>
-                  
-                </div>
-            
-          </div>
-            <a  href="{{ url_for('posts.post', id = post.id)}}" class="p-item__content">
-              <p>
-              {{ post.content }}
-              </p>
-            </a>
-            
-          </li>
+            <div class="p-top">
+              <div class="author-img-cont">
+                <img class="p__author-img" src="{{ url_for('static',filename='profile_pics/' +post.author.profile_image) }}" alt="{{ post.author.username }}">
+              </div>
+              <div class="p-top-detail">
+                <p><a class="p__author" href="{{ url_for('users.user_posts', username = post.author.username)}}">{{ post.author.username}}</a></p>
+                <p class="p__dateposted"> <span>{{ post.date_posted.strftime("%d %b, %Y") }} </span>
+              </div>
+            </div>
 
+            <div class="p-btm">
+              <p class="p__title">{{ post.title }}</p>
+              <a href="{{ url_for('posts.post', id = post.id)}}" class="p__content">{{ post.content | striptags | truncate(125, killwords=False, end='...')}}</a>
+              <br>
+              <a href="{{ url_for('posts.post', id = post.id)}}" class="p__readmore">READ MORE</a>
+            </div>
+              
+                
+          </li>
+              
         {% endif %}
       {% endfor %}
-    </ul>
-
-    <div class="pagination">
-    {% for page_num in posts.iter_pages(left_edge=1, left_current=1, right_current=2, right_edge=1) %}
+    </ul>        
+  </div>
+  {% if not posts.pages <= 15 %}
+  <div class="pagination">
+  {% for page_num in posts.iter_pages(left_edge=1, left_current=1, right_current=2, right_edge=1) %}
     {% if page_num %}
       {% if posts.page == page_num %}
         <a class="btn btn--primary" href="{{ url_for('main.index', page = page_num) }} ">{{page_num}}</a>
@@ -51,26 +48,10 @@
       ...
     {% endif %}
   {% endfor %}
-    </div>
+  </div>
+{% endif %}
 
   </div>
 </section>
-  <style>
-    .btn--primary{
-      background-color: cyan;
-      color: white;
-      
-    }
-    .btn{
-      display: inline-block;
-      padding: 1.5rem;
-      margin: 0.2rem 0.6rem;
-      font-weight: bold;
-    }
-    .btn--outline{
-      color: #000;
-      border: 1px solid cyan;
-      border-radius: 5px;
-    }
-  </style>
+  
 {% endblock content %}

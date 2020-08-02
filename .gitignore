@@ -1,4 +1,5 @@
 __pycache__/
 venv/
 .vscode/
-./blog/__pycache__/
+/blog/**/__pycache__
+__pycache__/*.pyc

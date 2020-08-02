@@ -9,7 +9,8 @@ from marshmallow_sqlalchemy import SQLAlchemyAutoSchema
 from flask_login import UserMixin
 
 #serializer and token generator
-from itsdangerous import TimedJSONWebSignatureSerializer as Serializer, BadSignature, BadTimeSignature
+from itsdangerous import (TimedJSONWebSignatureSerializer as Serializer, BadSignature,
+                           BadTimeSignature, URLSafeTimedSerializer, SignatureExpired)
 
 #for searching the db
 from blog import search
@@ -46,11 +47,8 @@ class User(db.Model, UserMixin):
     def verify_password(self, password):
         return bcrypt.check_password_hash(password, self.password)
 
-    def get_reset_token(self, expires_sec=1800):
-        s = Serializer(current_app.config['SECRET_KEY'], expires_sec)
-        return s.dumps({'user_id': self.id}).decode('utf-8')
 
-    def get_verification_token(self, expires_sec=1800):
+    def get_token(self, expires_sec=1800):
         s = Serializer(current_app.config['SECRET_KEY'], expires_sec)
         return s.dumps({'user_id': self.id}).decode('utf-8')
 
@@ -62,6 +60,7 @@ class User(db.Model, UserMixin):
         except:
             return None
         return User.query.get(user_id)
+
 
     # implementing authentication based on tokens
     def generate_auth_token(self, expires_in=600):

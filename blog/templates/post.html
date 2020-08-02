@@ -2,41 +2,32 @@
 {%block content %}
     <section class="post">
       <div class="post__container">
-        <h1 class="pc__title"> {{ post.title }}</h1>
-        <div class="pc__header">
-          <p class="author_img">
-            <img src="{{ url_for('static',filename='profile_pics/' +current_user.profile_image) }}" alt="{{ current_user.username }}"></p>
-          </p>
-          <div class="author">
-            <a href="{{ url_for('users.user_posts', username = post.author.username)}}">{{ post.author.username}}</a> 
-           </div>
-          <p>
-            .
-          </p>
-          <p class="category">{{ post.category }}</p>
-          <p>
-            .
-          </p>
-          <p class="dateposted">
-            <span>{{ post.date_posted.strftime("%d %b, %Y") }} </span>
-          </p>
-        </div>
-
-        {% if post.image_file %}
-        <div class="pc__image">
-            <img src="
-            {{url_for('static', filename='post_pictures/' + post.image_file )}}
-            " alt="Posted by {{current_user.username}}">
+        <div class="p-top">
+          <div class="author-img-cont">
+            <img class="p__author-img" src="{{ url_for('static',filename='profile_pics/' +post.author.profile_image) }}" alt="{{ post.author.username }}">
           </div>
-        {% endif %}
+          <div class="p-top-detail">
+            <p><a class="p__author" href="{{ url_for('users.user_posts', username = post.author.username)}}">{{ post.author.username}}</a></p>
+            <p class="p__dateposted"> <span>{{ post.date_posted.strftime("%d %b, %Y") }} </span>
+          </div>
+        </div>
 
         <div class="pc__content">
-          <article>
-            {{ post.content }}
-          </article>
+          <h2 class="post__title"> {{ post.title }}</h2>
+          {% if post.image_file %}
+              <div class="post__image">
+                  <img src="
+                  {{url_for('static', filename='post_pictures/' + post.image_file )}}
+                  " alt="Posted by {{current_user.username}}">
+              </div>
+          {% endif %}
+            <div class="post__article">
+              <p>
+                {{ post.content }}
+              </p>
+            </div>
         </div>
-      
-            
+                    
         <div class="pc__likes">
           {% if current_user.has_liked_post(post) %}
               <a href="{{ url_for('posts.like_action', post_id=post.id, action='unlike') }}" class="unlike-btn post-like"><img width="34" height="26" src="{{ url_for ('static', filename = 'website_images/heart.svg')}}" alt="Heart this"></a>
@@ -47,10 +38,10 @@
                 <p> You and {{ post.likes.count() }} others loved this post </p>
 
                 {% elif post.likes.count() > 1 %}
-                <p> You and 1 other liked this post</p>
+                <p> You and 1 other loved this post</p>
                 
                 {% elif post.likes.count() == 1  %}
-                <p>You liked this post</p>
+                <p>You loved this post</p>
               
 
               
@@ -62,11 +53,11 @@
               <a href="{{ url_for('posts.like_action', post_id=post.id, action='like') }} " class="like-btn post-like"><img width="34" height="26" src="{{ url_for ('static', filename = 'website_images/heartoutline.svg')}}" alt="unheart this"></i></a>
           {% endif %}
         </div>
-     
+     <hr>
       {% if current_user.id == post.author.id %}
         <p class="pc__ops">
-          <a href="{{url_for('posts.deletepost', post_id=post.id)}}">Delete</a>
-          <a href="{{url_for('posts.updatepost', post_id=post.id)}}">Update</a>
+          <a  class="post__update" href="{{url_for('posts.updatepost', post_id=post.id)}}">Update</a>
+          <a  class="post__delete" href="{{url_for('posts.deletepost', post_id=post.id)}}">Delete</a>
         </p>
       {% endif %}
       </div>
