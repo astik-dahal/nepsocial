@@ -56,7 +56,34 @@
                   {{ form.username (class="form-control", placeholder="John Doe") }} 
                   {% endif %}
               </div>
-  
+              <div class="form-group ">
+                {{ form.password.label(class="form-control-label") }}
+                {% if form.password.errors%}
+                {{ form.password (class="form-control", placeholder="*********")}}
+                <div class="invalid-feedback">
+                    {% for error in form.password.errors %}
+                    <span class="form-control-error"  >{{error  }}</span>
+                    {% endfor %}
+                </div>
+            {% else %}
+            {{ form.password (class="form-control", placeholder="*********")}}
+            {% endif %}
+     
+            </div>
+
+            <div class="form-group">
+              {{ form.confirm_password.label(class="form-control-label") }}
+              {% if form.confirm_password.errors%}
+              {{ form.confirm_password (class="form-control", placeholder="*********")}}
+              <div class="invalid-feedback">
+                  {% for error in form.confirm_password.errors %}
+                  <span class="form-control-error"  >{{error}}</span>
+                  {% endfor %}
+              </div>
+              {% else %}
+                  {{ form.confirm_password (class="form-control", placeholder="*********")}}
+              {% endif %}
+              </div>
                
                 <div class="form-group">
                   {{ form.submit(class="submit-btn btn btn--primary") }}

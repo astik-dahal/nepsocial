@@ -81,7 +81,6 @@ def updatepost(post_id):
                     return redirect(url_for('posts.updatepost'))
             post.title = form.title.data
             post.content = form.content.data
-            post.image_file = form.image_file.data
             post.category = form.category.data
             db.session.commit()
             flash("Post updated successfully", "success")

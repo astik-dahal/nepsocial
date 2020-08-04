@@ -1,6 +1,7 @@
 from flask import render_template, url_for, flash, redirect, request, Blueprint
 from flask_login import login_user, current_user, logout_user, login_required
 from blog import db, bcrypt
+import random
 from blog.models import User, Post
 from blog.users.forms import (RegistrationForm, LoginForm, UpdateAccountForm,
                               RequestResetForm, ResetPasswordForm)
@@ -19,26 +20,32 @@ def profile():
             picture_file = save_profile_picture(form_picture)
             if picture_file:
                 current_user.profile_image = picture_file
+            # else:  USING FORM VALIDATE ON SUBMIT, so else with flash is not required
+            #     flash("Unsupported file type. Please upload .JPG or .PNG")
+            #     return redirect(url_for('users.profile'))
+        if form.password.data and form.confirm_password.data:
+            if form.password.data == form.confirm_password.data:
+                hashed_pw = bcrypt.generate_password_hash(form.password.data)
+                current_user.password = hashed_pw
             else:
-                flash("Unsupported file type. Please upload .JPG or .PNG")
+                flash("Passwords don't match", 'error')
                 return redirect(url_for('users.profile'))
-        current_user.username = form.username.data
+        current_user.username = form.username.data  #current user is derived from usermixin class in models, from loginmanager
         current_user.email = form.email.data
-        hashed_pw = bcrypt.generate_password_hash(form.password.data)
-        current_user.password = hashed_pw
+       
         db.session.commit()
         flash('Your account has been updated!', 'success')
         return redirect(url_for('users.profile'))
-    elif request.method == 'GET':
+    elif request.method == 'GET': #adds the current users email and username on the form field
         form.username.data = current_user.username
         form.email.data = current_user.email
     profile_image = url_for('static',
                             filename='profile_pics/' +
                             current_user.profile_image)
-    page = request.args.get('page', 1, type=int)
+    page = request.args.get('page', 1, type=int) #get page query '?page=xx' from the url bar
     user = User.query.filter_by(username=current_user.username).first()
     posts = Post.query.filter_by(author=user).order_by(
-        Post.date_posted.desc()).paginate(per_page=10, page=page)
+        Post.date_posted.desc()).paginate(per_page=15, page=page)
     return render_template('profile.html',
                            title='Account',
                            profile_image=profile_image,
@@ -52,7 +59,7 @@ def user_posts(username):
     page = request.args.get('page', 1, type=int)
     user = User.query.filter_by(username=username).first_or_404()
     posts = Post.query.filter_by(author=user).order_by(
-        Post.date_posted.desc()).paginate(page=page, per_page=10)
+        Post.date_posted.desc()).paginate(page=page, per_page=15)
     return render_template('user_posts.html',
                            posts=posts,
                            user=user,
@@ -193,3 +200,4 @@ def email_token(token):
         return redirect(url_for('users.login'))
     form = LoginForm()
     return render_template('login.html', form=form)
+

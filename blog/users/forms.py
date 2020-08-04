@@ -53,10 +53,8 @@ class UpdateAccountForm(FlaskForm):
     username = StringField('New Username',
                            validators=[DataRequired(),
                                        Length(min=4, max=12)])
-    password = PasswordField('New Password', validators=[DataRequired(), Length(min=8, max=32)])
-    confirm_password = PasswordField('Confirm New Password', validators=[DataRequired(), EqualTo('password', message="Must be equal to the original password!")])
-    # picture = FileField('Change Profile Picture',
-    #                     validators=[FileAllowed(['jpg', 'png'])])
+    password = PasswordField('New Password') #, validators=[ Length(min=8, max=32)]
+    confirm_password = PasswordField('Confirm New Password') #, validators=[EqualTo('password', message="Must be equal to the original password!")]
     picture = FileField('Change Profile Picture', validators =[
         FileAllowed(['jpg', 'png'], message="Invalid file type. Upload JPG or PNG")
     ])
@@ -75,7 +73,7 @@ class UpdateAccountForm(FlaskForm):
             if user:
                 raise ValidationError(
                     'That email is taken. Please choose a different one.')
-    
+ 
 
 class RequestResetForm(FlaskForm):
     email = StringField('Email', validators=[DataRequired(), Email()])

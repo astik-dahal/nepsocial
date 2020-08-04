@@ -5,7 +5,7 @@ from flask import url_for, current_app
 from flask_mail import Message
 from blog import mail
 from werkzeug.utils import secure_filename
-
+import random
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg'}
 
 def allowed_file(filename):
@@ -74,3 +74,4 @@ Link is active for next 30 minutes.
 If you did not make this request, simply discard this email.
 '''
     mail.send(msg)
+
