@@ -1,43 +1,137 @@
 http://nepsocial.herokuapp.com/
 # nepsocial
 NEPSOCIAL, a simple social media for greater cause
-
+```
 '/api/token', methods = ['GET']
--get a valid token
 
+-Use Case:
+ get a valid token
+
+Returns a token for API validation  
+
+```
+```
 '/api/users', methods=['GET']
--get complete user's datalist
 
+-Use Case:
+get complete user's datalist
+
+```
+```
 '/api/users/<int:user_id>', methods=['GET']
--get specific user's data
 
+-Use Case:
+get specific user's data
 
+```
+```
 '/api/users', methods=['POST']
--add a new user
 
+-Use Case:
+add a new user
+
+-Parameters:
+{
+  username:['username'],
+  email:['email@email.com'],
+  password:['password'],
+  profile_image:['filename'],
+  confirmed:[True],
+}
+
+```
+```
 '/api/users/<int:user_id>', methods=['PUT']
--update an existing user
 
+-Use Case:
+update an existing user
+
+-Parameters:
+{
+  username:['username'],
+  email:['email@email.com'],
+  password:['password'],
+  profile_image:['filename.JPG'] or ['filename.PNG'],
+  confirmed:[True] or [False],
+}
+
+```
+```
 '/api/users/<int:user_id>', methods=['DELETE']
--delete an user
 
+-Use case:
+ delete an user
+
+```
+```
 '/api/posts', methods=['GET']
--get all posts
 
+-Use Case:
+ get all posts
+
+```
+```
 '/api/posts/<int:post_id>', methods=['GET']
--get specific post
 
+-Use Case:
+ get specific post
+
+```
+```
 '/api/posts', methods=['POST']
--add a post
 
+-Use case:
+ add a post
+
+-Parameters:
+{
+  title:['title'],
+  content:['content'],
+  category:['Public'] or ['Private'],
+  image_file:['filename.JPG'] or ['filename.PNG'],
+  user_id:['1'],
+}
+
+```
+```
 '/api/posts/<int:post_id>', methods=['PUT']
--update a post
 
+-Use case:
+ update a post
+
+-Parameters:
+{
+  title:['title'],
+  content:['content'],
+  category:['Public'] or ['Private'],
+  image_file:['filename.JPG'] or ['filename.PNG'],
+  user_id:['1'],
+}
+
+```
+```
 '/api/posts/<int:post_id>', methods=['DELETE']
--delete a post
 
+-Use Case:
+ delete a post
+ 
+```
+```
 '/api/postlikes', methods=['GET']
--see post likes and liked by
 
+-Use case:
+ see post likes and liked by
+
+```
+```
 '/api/<int:user_id>/<int:post_id>/<action>', methods=['POST']
--like a specific post
+
+-Use Case:
+ like a specific post given post id and user id
+ 
+-Parameters:
+{
+  post = ['1'],
+  user = ['3'],
+}
+```
