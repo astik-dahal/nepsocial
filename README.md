@@ -1,6 +1,12 @@
 http://nepsocial.herokuapp.com/
 # nepsocial
 NEPSOCIAL, a simple social media for greater cause
+
+#API DOCUMENTATION
+<br>
+-Add basic auth header with registered username and password<br>
+-Get a token from /api/token<br>
+-Use the token as username and password field can be any random string<br>
 ```
 '/api/token', methods = ['GET']
 
