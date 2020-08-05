@@ -45,7 +45,8 @@ class User(db.Model, UserMixin):
         self.password = bcrypt.generate_password_hash(password)
 
     def verify_password(self, password):
-        return bcrypt.check_password_hash(password, self.password)
+        password_hash = bcrypt.generate_password_hash(password)
+        return bcrypt.check_password_hash(password_hash, self.password)
 
 
     def get_token(self, expires_sec=1800):

@@ -20,7 +20,7 @@ mail  = Mail()
 migrate = Migrate()
 search = Search()
 ma = Marshmallow()
-auth = HTTPAuth()
+auth = HTTPBasicAuth()
 # manager.add_command('db', MigrateCommand)
 
 def create_app(config_class=Config):

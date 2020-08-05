@@ -1,12 +1,16 @@
 from blog import bcrypt
 from flask import g, make_response, jsonify
 from blog.models import User
-
+from blog import auth
 #import schemas for data serialization
 from blog.models import UserSchema, PostSchema, PostLikeSchema
 
 def custom_error(message, status_code):
     return make_response(jsonify({'error': message}), status_code)
+
+@auth.error_handler
+def auth_error(status):
+    return "Access Denied", status
 
 @auth.verify_password
 def verify_password(username_or_token, password):
@@ -16,7 +20,7 @@ def verify_password(username_or_token, password):
     if not user:
         # try to authenticate with username/password
         user = User.query.filter_by(username=username_or_token).first()
-        if not user or not bcrypt.check_password_hash(hashed_pw, password):
+        if not user or not user.verify_password(password):
             return False
     g.user = user
     return True

@@ -1,10 +1,10 @@
-from flask import jsonify, make_response, url_for, request, Blueprint
-from blog.models import User, Post, UserMixin, PostLike
+from flask import jsonify, make_response, url_for, request, Blueprint,g
+from blog.models import User, Post, UserMixin, PostLike, UserSchema, PostLikeSchema, PostSchema
 from blog import bcrypt, db
 from itsdangerous import (TimedJSONWebSignatureSerializer as Serializer,
                           BadSignature, SignatureExpired)
 from blog import auth
-
+from blog.API.utils import custom_error, verify_password
 api = Blueprint('api', __name__)
 
 @api.route('/api/token')
@@ -82,7 +82,7 @@ def update_user(user_id):
     email = request.json.get('email')
     password = request.json.get('password')
     profile_image = request.json.get('username')
-
+    confirmed = request.json.get('confirmed')
     hashed_pw = bcrypt.generate_password_hash(password).decode('utf-8')
 
     if request.json is None:
@@ -102,6 +102,7 @@ def update_user(user_id):
         user.email = email
         user.password = hashed_pw
         user.profile_image = profile_image
+        user.confirmed = confirmed
         db.session.commit()
     except:
         return custom_error('Error while updating the user', 400)
