@@ -49,7 +49,7 @@ def save_post_picture(form_picture):
 def send_reset_email(user):
     token = user.get_token(expires_sec = 18000)
     msg = Message('Password Reset Email',
-                  sender='testuserdahal@gmail.com',
+                  sender='nepsocialverify@gmail.com',
                   recipients=[user.email])
     msg.body = f'''To reset your password, visit the following link:
 {url_for('users.reset_token', token = token, _external = True)}
@@ -64,7 +64,7 @@ If you did not make this request, simply discard this email.
 def send_verification_email(user):
     token = user.get_token(expires_sec = 1800)
     msg = Message('Email Verification',
-                  sender='testuserdahal@gmail.com',
+                  sender='nepsocialverify@gmail.com',
                   recipients=[user.email])
     msg.body = f'''To verify your email, visit the following link:
 {url_for('users.email_token', token = token, _external = True)}

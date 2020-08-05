@@ -17,7 +17,7 @@ login_manager.login_view = 'users.login'
 login_manager.login_message_category = 'info'
 mail  = Mail()
 # manager = Manager()
-migrate = Migrate()
+migrate = Migrate(compare_type=True)
 search = Search()
 ma = Marshmallow()
 auth = HTTPBasicAuth()
