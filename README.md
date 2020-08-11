@@ -8,7 +8,7 @@ NEPSOCIAL, a simple social media for greater cause
 -Get a token from /api/token<br>
 -Use the token as username and password field can be any random string<br>
 ```
-'/api/token', methods = ['GET']
+'/api/token', methods = ['POST']
 
 -Use Case:
  get a valid token
