@@ -7,7 +7,7 @@ from blog import auth
 from blog.API.utils import custom_error, verify_password
 api = Blueprint('api', __name__)
 
-@api.route('/api/token')
+@api.route('/api/token', methods=['POST'])
 @auth.login_required
 def get_auth_token():
     token = g.user.generate_auth_token(3600)

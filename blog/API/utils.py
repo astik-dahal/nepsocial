@@ -20,8 +20,12 @@ def verify_password(username_or_token, password):
     if not user:
         # try to authenticate with username/password
         user = User.query.filter_by(username=username_or_token).first()
-        if not user or not user.verify_password(password):
+        if user and bcrypt.check_password_hash(hashed_pw, password):
+            g.user = user
+            return True
+        else:
             return False
-    g.user = user
-    return True
+    else:
+        g.user = user
+        return True
 
